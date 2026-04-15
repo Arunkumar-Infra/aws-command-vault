@@ -1,0 +1,31 @@
+Copy the Agent to the Target Computer:
+Use scpto copy the downloaded agent to the remote computer where the agent needs to be installed.
+scp (remoteoffice_name)_UEMSLinuxAgent.zip username@hostname: Path_To_Storage_Directory_If_Needed
+username: Root username of the target computer.
+hostname: Local hostname of the target computer.
+If no path is specified, the agent will be copied to /home/username on the target computer.
+
+Install the Agent on the Target Computer:
+Open the terminal and log into the target computer: ssh username@hostname
+Log in as the root user. If not logged in as root, use the sudo command and enter the password when prompted to perform each operation.
+Navigate to Downloaded Agent Location:
+Go to the directory where the agent has been downloaded.
+
+Unzip the UEMS Agent:
+Unzip the (remoteoffice_name)_UEMSLinuxAgent.zip file using the command:
+Command to Unzip the UEMS Agent
+unzip -e (remoteoffice_name)_UEMSLinuxAgent.zip
+copy-icon-1
+Verify Files:
+Confirm that both UEMS_LinuxAgent.bin and serverinfo.json are in the same directory.
+Set Executable Permissions:
+As a root user, make UEMS_LinuxAgent.bin executable with the following command:
+Command to Set Executable Permissions
+
+chmod +x UEMS_LinuxAgent.bin
+copy-icon-1
+Run the Installer:
+Execute the installation command as follows:
+Command to Run the Installer
+
+./UEMS_LinuxAgent.bin

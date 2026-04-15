@@ -1,0 +1,33 @@
+1.Install Linux Mint from media
+
+
+sudo apt-get install realmd krb5-user sssd oddjob oddjob-mkhomedir adcli samba-common samba-common-tools ntpdate ntp
+
+
+sudo apt-get remove avahi-daemon
+
+Reboot machine
+
+
+sudo realm discover --verbose
+
+Join the domain with the command:
+sudo join realm [KMCH.COM] [domain_admin_account]
+
+
+sudo nano /etc/sssd/sssd.conf
+use_fully_qualified_names = True to = False
+CTRL+o CTRL+x
+
+sudo nano /etc/pam.d/common-session
+session required pam_mkhomedir.so
+CTRL+o CTRL+x
+
+sudo nano /etc/sudoers
+Add the line
+%domain\ admins ALL=(ALL) ALL
+CTRL+o CTRL+x
+
+Change login screen to allow typing in of usernames in System Preferences → Login Screen
+
+Reboot machine and attempt network login

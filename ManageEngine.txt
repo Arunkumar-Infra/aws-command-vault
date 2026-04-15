@@ -1,0 +1,4 @@
+Installing ManageEngine agent. 
+1. Goto Terminal and to the location of the bin file
+2. chmod +x DesktopCentral_LinuxAgent.bin
+3. sudo ./DesktopCentral_LinuxAgent.bin

@@ -1,0 +1,5 @@
+Installing Crowdstike AV 
+1. Goto Terminal and to the location of the .deb file
+2. sudo apt-get install libcurl4-openssl-dev libssl-dev
+3. sudo dpkg -i falcon-sensor_7.21.0-17405_amd64.deb
+4. sudo /opt/CrowdStrike/falconctl -s --cid=B0C1436B5B0640918B95CBD6D95FE369-6A5.  sudo systemctl start falcon-sensor

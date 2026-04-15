@@ -1,0 +1,142 @@
+
+1.
+sudo apt install realmd sssd sssd-tools libnss-sss libpam-sss krb5-user adcli samba-common-bin oddjob oddjob-mkhomedir packagekit samba
+
+
+
+2.sudo apt-get remove avahi-daemon
+
+Restart your computer, then
+
+
+
+3. sudo nano /etc/krb5.conf
+---------------------------------
+[libdefaults]
+    default_realm = KMCH.COM
+    dns_lookup_kdc = true
+    dns_lookup_realm = true
+    udp_preference_limit = 0
+[realms]
+    KMCH.COM = {
+        kdc = kmch.com
+        admin_server = kmch.com
+        master_kdc = kmch.com
+        default_domain = kmch.com
+        }
+
+[domain_realm]
+    .kmch.com = KMCH.COM
+    kmch.com = KMCH.COM
+
+[logging]
+    kdc = SYSLOG:INFO
+    admin_server = FILE=/var/kadm5.log
+
+
+------------------------------------------------
+4.sudo pam-auth-update
+------------------------------------------------
+Select the below option by pressing Spacebar
+[*] Create Home Directory on Login
+
+------------------------------------------------
+
+5. sudo nano /etc/realmd.conf
+
+-------------------------------------------------
+[users]
+    default-home = /home/%U
+    default-shell = /bin/bash
+
+[active-directory]
+    default-client = sssd
+    os-name = Linux Ubuntu
+    os-version = 24.04
+
+[service]
+    automatic-install = no
+
+[kmch.com]
+    fully-qualified-names = yes
+    automatic-id-mapping = no
+    user-principal = yes
+    manage-system = yes
+
+--------------------------------------------------
+6. sudo nano /etc/systemd/timesyncd.conf
+
+[Time]
+NTP=pdc.kmch.com
+#FallbackNTP=ntp.ubuntu.com
+#RootDistanceMaxSec=5
+#PollIntervalMinSec=32
+#PollIntervalMaxSec=2048
+
+--------------------------------------
+7.sudo timedatectl set-ntp true
+8.sudo systemctl restart systemd-timesyncd.service
+9.sudo timedatectl --adjust-system-clock
+10.timedatectl status
+--------------------------------------
+11. sudo nano /etc/hosts
+----------------------------------------------------
+Add below lines
+
+172.16.1.17	bdc bdc.kmch.com
+172.16.1.7      pdc pdc.kmch.com
+172.16.1.7      kmch   kmch.com
+172.16.1.17     kmch   kmch.com
+
+---------------------------------------------------
+
+
+12.realm discover kmch.com
+
+13. kinit linux@KMCH.COM
+14. klist
+15. kdestroy
+
+16.sudo realm join --verbose --user=linux kmch.com
+17.sudo nano /etc/sssd/sssd.conf
+----------------------------------------------------------------
+[sssd]
+domains = kmch.com
+config_file_version = 2
+services = nss, pam
+default_domain_suffix = kmch.com
+
+[domain/KMCH.COM]
+ad_domain = KMCH.COM
+krb5_realm = KMCH.COM
+realmd_tags = manages-system joined-with-adcli
+cache_credentials = True
+id_provider = ad
+krb5_store_password_if_offline = True
+default_shell = /bin/bash
+ldap_id_mapping = True
+use_fully_qualified_names = True
+fallback_homedir = /home/%u@%d
+access_provider = simple
+ad_hostname = pdc.kmch.com
+dyndns_update = True
+dyndns_refresh_interval = 43200
+dyndns_update_ptr = True
+dyndns_ttl = 3600
+dyndns_auth = GSS-TSIG
+
+
+-------------------------------------------------------------------
+18. sudo systemctl restart sssd.service
+
+19. sudo nano /etc/pam.d/common-session
+---------------------------Add below line---------------------------
+session required pam_mkhomedir.so
+-------------------------------------------------------
+
+20. sudo nano /etc/sudoers
+------------------Add the line----------------------
+%domain\ admins ALL=(ALL:ALL) ALL
+------------------------------------------------------
+
+21. Reboot machine and attempt network login
