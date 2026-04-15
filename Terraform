@@ -1,0 +1,27 @@
+# Terraform 
+aws configure
+mkdir terraform-project
+cd terraform-project
+touch main.tf
+
+# Ec2 - Launch
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "test" {
+  ami           = "ami-0f5ee92e2d63afc18"
+  instance_type = "t2.micro"
+}
+
+CTRL + X → Y → Enter
+
+# main.tf.txt ❌(errors)
+dir (powershell)
+ren main.tf.txt main.tf
+terraform init
+terraform plan
+terraform apply
+
+# AWS account does NOT have a default VPC
+aws ec2 create-default-vpc  
